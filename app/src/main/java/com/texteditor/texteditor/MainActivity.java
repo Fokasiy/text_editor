@@ -1,0 +1,50 @@
+package com.texteditor.texteditor;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.widget.EditText;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText mEditText;
+    private TextView mTextView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        mEditText = findViewById(R.id.edit_text_view);
+        mTextView = findViewById(R.id.text_view);
+
+        handleTextChanges();
+    }
+
+    private void handleTextChanges(){
+        mEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(!TextUtils.isEmpty(charSequence)){
+                    String resultText = TextEditHelper.getProperString(charSequence.toString());
+                    mTextView.setText(resultText);
+                }
+                else{
+                    mTextView.setText("");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+    }
+}
