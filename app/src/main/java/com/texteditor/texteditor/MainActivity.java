@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -46,5 +48,36 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.text_examples_menu, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+
+        switch(itemId){
+            case R.id.text1:{
+                mEditText.setText("with its powerful tools and dazzling effects,Keynote makes it Easy to create stunning and memorable presentations. ");
+                return true;
+            }
+            case R.id.text2:{
+                mEditText.setText("See Who you ’re working with ... While you’re editing, a separate list lets you quickly see who else is in the presentation.");
+                return true;
+            }
+
+            case R.id.clear_button:{
+                mEditText.setText("");
+                return true;
+            }
+
+            default: return super.onOptionsItemSelected(item);
+        }
     }
 }

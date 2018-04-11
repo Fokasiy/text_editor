@@ -8,23 +8,14 @@ import android.text.TextUtils;
 
 public class TextEditHelper {
 
+    private static final String[] mSeparatorsArray = new String[]{",", "...", "'", "’"};
+
     public static String getProperString(String inputString){
-        StringBuilder builder = new StringBuilder();
-        String[] splittedArray = inputString.split("\\s+");
 
-        for (int i = 0; i<splittedArray.length; i++){
-            String withoutSpaces = splittedArray[i].replace("\\s+","");
-            if(i==0){
-                String firstWord = getProperFirstWord(withoutSpaces);
-                builder.append(firstWord+" ");
-            }
-            else{
-               withoutSpaces = checkForSeparators(withoutSpaces).toLowerCase();
-               builder.append(withoutSpaces+" ");
-            }
-        }
+        String separatedStr = checkForSeparators(inputString).toLowerCase();
+        String strSentences = separateSentences(separatedStr+" ").trim();
 
-        return builder.toString();
+        return strSentences;
     }
 
 
@@ -36,18 +27,16 @@ public class TextEditHelper {
                 withFirstUpper = firstWord.substring(0,1).toUpperCase() + firstWord.substring(1).toLowerCase();
             }
         }
-        withFirstUpper = checkForSeparators(withFirstUpper);
 
         return withFirstUpper;
     }
 
 
     private static String checkForSeparators(String inputWord){
-        String[] separatorsArray = new String[]{",","...", ".", ";"};
         String resultString = inputWord;
 
-        for (int i=0; i<separatorsArray.length; i++){
-            resultString = checkSpaces(resultString, separatorsArray[i]);
+        for (int i=0; i<mSeparatorsArray.length; i++){
+            resultString = checkSpaces(resultString, mSeparatorsArray[i]);
         }
 
         return resultString;
@@ -56,18 +45,26 @@ public class TextEditHelper {
 
     private static String checkSpaces(String inputWord, String ch){
         StringBuilder separateBuilder = new StringBuilder();
-        String processedStr = "";
-        int indexOf = inputWord.indexOf(ch);
+        int startPartIndex = 0;
+        int indexOf = 0;
         if(indexOf!=-1){
             do{
+                indexOf = inputWord.indexOf(ch, startPartIndex);
+
                 if(indexOf!=-1){
-                    String str = inputWord.substring(0,indexOf+ch.length());
-                    String wc = processedStr.replace("\\s+","");
-                    separateBuilder.append(wc+" ");
-                    indexOf = inputWord.indexOf(ch, indexOf+1);
+                    String str = inputWord.substring(startPartIndex,indexOf);
+                    String wc = str.trim();
+                    startPartIndex = indexOf+ch.length();
+                    if(ch.equals("'") || ch.equals("’") || ch.equals("...")){
+                        separateBuilder.append(wc+ch);
+                    }
+                    else{
+                        separateBuilder.append(wc+ch+" ");
+                    }
                 }
                 else{
-
+                    String str = inputWord.substring(startPartIndex).trim();
+                    separateBuilder.append(str);
                 }
             }while(indexOf>=0);
 
@@ -75,5 +72,59 @@ public class TextEditHelper {
         }
         else
             return inputWord;
+    }
+
+
+    private static String separateSentences(String inputString){
+
+        int countOfDots = countOccurrences(inputString, '.');
+
+        if(countOfDots == 0) return getProperFirstWord(inputString);
+
+        String[] stringArray = inputString.split("\\.");
+
+        if(stringArray.length>1){
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i<stringArray.length; i++){
+                String separateSentence = stringArray[i].trim();
+                if(TextUtils.isEmpty(separateSentence) && !TextUtils.isEmpty(builder.toString())){
+                    if(countOfDots!=0){
+                        countOfDots--;
+                        builder.append(".");
+                    }
+                    continue;
+                }
+                else{
+                    separateSentence = getProperFirstWord(separateSentence);
+                }
+
+                if(i==0){
+                    builder.append(separateSentence+(countOfDots!=0?".":""));
+                    countOfDots--;
+                }
+                else{
+                    builder.append(" "+separateSentence+(countOfDots!=0?".":""));
+                    countOfDots--;
+                }
+            }
+
+            return builder.toString();
+        }
+        else
+            return getProperFirstWord(inputString);
+    }
+
+
+    private static int countOccurrences(String haystack, char needle)
+    {
+        int count = 0;
+        for (int i=0; i < haystack.length(); i++)
+        {
+            if (haystack.charAt(i) == needle)
+            {
+                count++;
+            }
+        }
+        return count;
     }
 }
