@@ -13,7 +13,7 @@ public class TextEditHelper {
     public static String getProperString(String inputString){
 
         String separatedStr = checkForSeparators(inputString).toLowerCase();
-        String strSentences = separateSentences(separatedStr+" ").trim();
+        String strSentences = separateSentences(separatedStr).trim();
 
         return strSentences;
     }
@@ -23,9 +23,11 @@ public class TextEditHelper {
         String withFirstUpper = "";
         if(!TextUtils.isEmpty(firstWord)){
             char firstLetter = firstWord.charAt(0);
-            if(Character.isLetterOrDigit(firstLetter) && Character.isLowerCase(firstLetter)){
+            if(Character.isLetter(firstLetter) && Character.isLowerCase(firstLetter)){
                 withFirstUpper = firstWord.substring(0,1).toUpperCase() + firstWord.substring(1).toLowerCase();
             }
+            else
+                withFirstUpper = firstWord;
         }
 
         return withFirstUpper;
